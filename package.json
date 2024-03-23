@@ -1,5 +1,5 @@
 {
-    "name": "@yd/r-utils",
+    "name": "@yd/r-hooks",
     "version": "1.0.0",
     "description": "## react工具库",
     "main": "index.ts",
