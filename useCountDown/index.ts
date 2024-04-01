@@ -4,14 +4,14 @@ import { useStore, useUnmount, useLock, useUpdate, useLatest } from '../index';
 import { Props } from './types';
 import { useMemo, useRef } from 'react';
 
-export default ({ time: t, reset = false, delay, formatTime = (time) => time }: Props) => {
-    const { count, dispatch, reset: r } = useStore({ count: t });
+export default ({ time: t, reset: r = false, delay, formatTime = (time) => time }: Props) => {
+    const { count, dispatch, reset } = useStore({ count: t });
     const time = useMemo(() => formatTime(count), [count]);
     const timer = useRef<NodeJS.Timer>();
     const { done: onCountDown, unLock } = useLock(
         () =>
             new Promise<string | number>(async (resolve) => {
-                let { count } = await r();
+                let { count } = await reset();
                 timer.current = setInterval(() => {
                     count -= 1;
                     dispatch({ count });
@@ -26,7 +26,7 @@ export default ({ time: t, reset = false, delay, formatTime = (time) => time }: 
     const onAbort = useLatest(async () => {
         await unLock();
         clearInterval(timer.current);
-        reset && (await r());
+        r && (await reset());
         return time;
     });
     useUpdate(() => dispatch({ count: t }), [t]);
