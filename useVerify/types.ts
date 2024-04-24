@@ -34,7 +34,8 @@ export type Rules = Record<
     | 'url'
     | 'base64'
     | 'licensePlate'
-    | 'passport',
+    | 'passport'
+    | 'amount',
     {
         regExp: RegExp;
         errMsg: string;
