@@ -22,7 +22,7 @@ export default ({ time: t, reset: r = false, delay, formatTime = (time) => time 
                     if (count > 0) {
                         return;
                     }
-                    resolve(onAbort());
+                    resolve(abort());
                 }, 1000);
             }),
         delay
