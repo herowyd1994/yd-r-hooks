@@ -10,8 +10,8 @@ export default ({ time: t, reset: r = false, delay, formatTime = (time) => time 
     const timer = useRef<NodeJS.Timer>();
     const { done: onCountDown, unLock } = useLock(
         () =>
-            new Promise<string | number>(async (resolve) => {
-                let { count } = await reset();
+            new Promise(async (resolve) => {
+                let count = t;
                 timer.current = setInterval(() => {
                     count -= 1;
                     dispatch({ count });
@@ -23,13 +23,13 @@ export default ({ time: t, reset: r = false, delay, formatTime = (time) => time 
             }),
         delay
     );
-    const onAbort = useLatest(async () => {
-        await unLock();
+    const onAbort = useLatest(() => {
         clearInterval(timer.current);
-        r && (await reset());
-        return time;
+        timer.current = void 0;
+        r && dispatch({ count: t });
+        return unLock();
     });
-    useUpdate(() => dispatch({ count: t }), [t]);
+    useUpdate(() => !timer.current && dispatch({ count: t }), [t]);
     useUnmount(onAbort);
     return {
         time,
