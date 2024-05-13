@@ -8,7 +8,11 @@ export default ({ time: t, reset: r = false, delay, formatTime = (time) => time 
     const { count, dispatch, reset } = useStore({ count: t });
     const time = useMemo(() => formatTime(count), [count]);
     const timer = useRef<NodeJS.Timer>();
-    const { done: onCountDown, unLock } = useLock(
+    const {
+        done: countDown,
+        unLock,
+        lock
+    } = useLock(
         () =>
             new Promise(async (resolve) => {
                 let count = t;
@@ -23,17 +27,16 @@ export default ({ time: t, reset: r = false, delay, formatTime = (time) => time 
             }),
         delay
     );
-    const onAbort = useLatest(() => {
+    const abort = useLatest(() => {
         clearInterval(timer.current);
-        timer.current = void 0;
         r && dispatch({ count: t });
         return unLock();
     });
-    useUpdate(() => !timer.current && dispatch({ count: t }), [t]);
-    useUnmount(onAbort);
+    useUpdate(() => !lock && dispatch({ count: t }), [t]);
+    useUnmount(abort);
     return {
         time,
-        onCountDown,
-        onAbort
+        countDown,
+        abort
     };
 };

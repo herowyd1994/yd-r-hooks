@@ -20,7 +20,7 @@ export default <S extends Store, K extends keyof S = keyof S>(initStore: S | (()
                         placeholder,
                         setValue: (value) => dispatch({ [key]: value } as Action<S>),
                         reset: () => reset(key as K),
-                        validate: () => onValidate(key as K),
+                        validate: () => validate(key as K),
                         getErrMsg: () => getErrMsg(key as K)
                     }
                 }),
@@ -46,11 +46,12 @@ export default <S extends Store, K extends keyof S = keyof S>(initStore: S | (()
             {} as Values<S>
         )
     );
-    const onValidate = (keys: K | K[] | '*' = '*') =>
+    const validate = (keys: K | K[] | '*' = '*') =>
         new Promise<Values<S>>((resolve, reject) => {
             keys = (
-                keys === '*' ? Object.keys(store) : typeof keys === 'string' ? [keys] : keys
-            ) as K[];
+                keys === '*' ? Object.keys(store)
+                : typeof keys === 'string' ? [keys]
+                : keys) as K[];
             for (const key of keys) {
                 const errMsg = getErrMsg(key);
                 if (errMsg) {
@@ -94,7 +95,8 @@ export default <S extends Store, K extends keyof S = keyof S>(initStore: S | (()
         ...data,
         dispatch,
         reset,
+        validate,
         getValues,
-        onValidate
+        getErrMsg
     };
 };
