@@ -5,7 +5,7 @@ import { Props } from './types';
 import { useMemo, useRef } from 'react';
 
 export default ({ time: t, reset: r = false, delay, formatTime = (time) => time }: Props) => {
-    const { count, dispatch, reset } = useStore({ count: t });
+    const { count, dispatch } = useStore({ count: t });
     const time = useMemo(() => formatTime(count), [count]);
     const timer = useRef<NodeJS.Timer>();
     const {
@@ -28,7 +28,7 @@ export default ({ time: t, reset: r = false, delay, formatTime = (time) => time 
         delay
     );
     const abort = useLatest(() => {
-        clearInterval(timer.current);
+        clearInterval(timer.current as any);
         r && dispatch({ count: t });
         return unLock();
     });

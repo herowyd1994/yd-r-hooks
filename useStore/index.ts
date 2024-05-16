@@ -8,7 +8,7 @@ import { deepClone } from '@yd/utils';
 export default <S extends Record<string, any>, K extends keyof S = keyof S>(
     initStore: S | (() => S)
 ) => {
-    const iStore = typeof initStore === 'function' ? initStore() : initStore;
+    const iStore = initStore instanceof Function ? initStore() : initStore;
     const [store, setStore] = useReducer<Reducer<S, Action<S>>>((store, action) => {
         if (typeof action === 'object' || typeof action === 'function') {
             const nState = { ...store };
@@ -29,8 +29,9 @@ export default <S extends Record<string, any>, K extends keyof S = keyof S>(
     const reset = (keys: K | K[] | '*' = '*') => {
         const cStore = deepClone(iStore);
         keys = (
-            keys === '*' ? Object.keys(cStore) : typeof keys === 'string' ? [keys] : keys
-        ) as K[];
+            keys === '*' ? Object.keys(cStore)
+            : typeof keys === 'string' ? [keys]
+            : keys) as K[];
         return dispatch(
             keys.reduce((obj, key) => ({ ...obj, [key]: cStore[key] }), {} as Partial<S>)
         );
