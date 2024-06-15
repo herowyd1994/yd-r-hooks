@@ -41,16 +41,17 @@ export default <S extends Record<string, any>, K extends keyof S = keyof S>(
             keys === '*' ? Object.keys(cStore)
             : typeof keys === 'string' ? [keys]
             : keys) as K[];
-        keys.forEach((key) => (store[key] = cStore[key]));
+        keys.forEach((key) => (refs[key] = cStore[key]));
     };
     const isObject = (target: any) =>
         target &&
         typeof target === 'object' &&
         !(target instanceof RegExp) &&
         !(target instanceof Date);
-    const store = useMemo<S>(() => observer(deepClone(iStore)), []);
+    const refs = useMemo<S>(() => observer(deepClone(iStore)), []);
     return {
-        store,
+        ...refs,
+        refs,
         forceUpdate,
         reset
     };
