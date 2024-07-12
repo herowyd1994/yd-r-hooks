@@ -5,9 +5,7 @@ import { deepClone } from '@yd/utils';
 
 const map = new WeakMap();
 
-export default <S extends Record<string, any>, K extends keyof S = keyof S>(
-    initStore: S | (() => S)
-) => {
+export default <S extends Record<string, any>, K extends keyof S = keyof S>(initStore: S | (() => S)) => {
     const iStore = initStore instanceof Function ? initStore() : initStore;
     const [, update] = useState({});
     const observer = (target: S) => {
@@ -41,13 +39,10 @@ export default <S extends Record<string, any>, K extends keyof S = keyof S>(
             keys === '*' ? Object.keys(cStore)
             : typeof keys === 'string' ? [keys]
             : keys) as K[];
-        keys.forEach((key) => (refs[key] = cStore[key]));
+        keys.forEach(key => (refs[key] = cStore[key]));
     };
     const isObject = (target: any) =>
-        target &&
-        typeof target === 'object' &&
-        !(target instanceof RegExp) &&
-        !(target instanceof Date);
+        target && typeof target === 'object' && !(target instanceof RegExp) && !(target instanceof Date);
     const refs = useMemo<S>(() => observer(deepClone(iStore)), []);
     return {
         ...refs,
