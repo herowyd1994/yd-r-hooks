@@ -30,7 +30,7 @@
 
 "@yd/utils@https://github.com/herowyd1994/yd-utils.git":
   version "1.0.0"
-  resolved "https://github.com/herowyd1994/yd-utils.git#05e5a06b043cafef34d9b1714ea66fee31dffb95"
+  resolved "https://github.com/herowyd1994/yd-utils.git#c4a0aea060816a4be69ab91747a4c078344cf700"
 
 csstype@^3.0.2:
   version "3.1.3"
