@@ -21,23 +21,17 @@ export default <V>(handler: Handler<V>, delay: number = 250) => {
             return Promise.reject(err);
         }
     });
-    const unLock = async (time: number = 0) => {
-        (await sleep(time))();
-        refs.lock = false;
-    };
-    const sleep = (delay: number) =>
-        new Promise<() => void>(resolve =>
+    const unLock = async (time: number = 0) =>
+        new Promise<void>(resolve => {
             current.add(
-                setTimeout(
-                    () =>
-                        resolve(() => {
-                            current.forEach(t => clearTimeout(t));
-                            current.clear();
-                        }),
-                    delay
-                )
-            )
-        );
+                setTimeout(() => {
+                    current.forEach(t => clearTimeout(t));
+                    current.clear();
+                    refs.lock = false;
+                    resolve();
+                }, time)
+            );
+        });
     return {
         lock,
         done,
