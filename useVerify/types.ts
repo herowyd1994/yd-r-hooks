@@ -36,15 +36,9 @@ export type Rules = Record<
     | 'licensePlate'
     | 'passport'
     | 'amount',
-    {
-        regExp: RegExp;
-        errMsg: string;
-    }
+    { regExp: RegExp; errMsg: string }
 >;
 export type FnRules = Record<
     'length' | 'minLength' | 'maxLength' | 'min' | 'max',
-    {
-        validate(value: StoreOpts['value'], target: number): boolean;
-        errMsg: string;
-    }
+    { validate(value: StoreOpts['value'], target: number): boolean; errMsg: string }
 >;
