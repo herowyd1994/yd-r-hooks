@@ -18,9 +18,9 @@ export default <S extends Store, K extends keyof S = keyof S>(initStore: S | (()
                         value,
                         label,
                         placeholder,
-                        setValue: value => dispatch({ [key]: value } as Action<S>).then(item => item[key]),
-                        reset: () => reset(key as K).then(item => item[key]),
-                        validate: () => validate(key as K).then(item => item[key]),
+                        setValue: value => dispatch({ [key]: value } as Action<S>).then(item => ({ [key]: item[key] })),
+                        reset: () => reset(key as K).then(item => ({ [key]: item[key] })),
+                        validate: () => validate(key as K).then(item => ({ [key]: item[key] })),
                         getErrMsg: () => getErrMsg(key as K)
                     }
                 }),
