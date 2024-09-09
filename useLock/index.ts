@@ -16,7 +16,7 @@ export default <V>(handler: Handler<V>, delay: number = 250) => {
             const res = await handler(...args);
             await unLock(delay);
             return res;
-        } catch (err: any) {
+        } catch (err) {
             await unLock();
             return Promise.reject(err);
         }
