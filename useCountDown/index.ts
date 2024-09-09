@@ -14,7 +14,7 @@ export default ({ time: t, reset: r = false, delay, formatTime = time => time }:
         lock
     } = useLock(
         () =>
-            new Promise(async resolve => {
+            new Promise<Promise<void>>(async resolve => {
                 let count = t;
                 timer.current = setInterval(() => {
                     count -= 1;
