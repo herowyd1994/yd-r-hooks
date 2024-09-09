@@ -3,7 +3,11 @@
 import { useEffect, useRef, DependencyList } from 'react';
 import { Mount, Handler } from './types';
 
-export const useAsyncEffect = <V>(mount?: Mount<V>, unMount?: Mount<V> | DependencyList, deps?: DependencyList) => {
+export const useAsyncEffect = <V>(
+    mount?: Mount<V>,
+    unMount?: Mount<V> | DependencyList,
+    deps?: DependencyList
+) => {
     const context = useRef<V>();
     if (Array.isArray(unMount)) {
         deps = unMount;

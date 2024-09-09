@@ -41,7 +41,10 @@ export default <S extends Store, K extends keyof S = keyof S>(initStore: S | (()
         return getValues();
     };
     const getValues = useLatest(() =>
-        Object.entries(store).reduce((obj, [key, { value }]) => ({ ...obj, [key]: value }), {} as Values<S>)
+        Object.entries(store).reduce(
+            (obj, [key, { value }]) => ({ ...obj, [key]: value }),
+            {} as Values<S>
+        )
     );
     const validate = (keys: K | K[] | '*' = '*') =>
         new Promise<Values<S>>((resolve, reject) => {
@@ -68,7 +71,10 @@ export default <S extends Store, K extends keyof S = keyof S>(initStore: S | (()
             return `${label ?? (key as string)}不能为空`;
         }
         for (const [ruleKey, { validate, errMsg }] of Object.entries(fnRules)) {
-            if (Reflect.has(item, ruleKey) && !validate(value, Reflect.get(item as StoreOpts, ruleKey))) {
+            if (
+                Reflect.has(item, ruleKey) &&
+                !validate(value, Reflect.get(item as StoreOpts, ruleKey))
+            ) {
                 return `${label ?? (key as string)}${errMsg}`;
             }
         }
