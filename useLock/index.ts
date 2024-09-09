@@ -7,7 +7,7 @@ import { useRef } from 'react';
 export default <V>(handler: Handler<V>, delay: number = 250) => {
     const { lock, refs } = useReactive({ lock: false });
     const { current } = useRef(new Set<NodeJS.Timeout>());
-    const done = useLatest(async (...args: any[]) => {
+    const done = useLatest(async (...args) => {
         if (refs.lock) {
             return Promise.reject('useLock Lock');
         }

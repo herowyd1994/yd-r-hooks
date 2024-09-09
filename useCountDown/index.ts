@@ -32,7 +32,7 @@ export default ({ time: t, reset: r = false, delay, formatTime = time => time }:
         r && dispatch({ count: t });
         return unLock();
     });
-    useUpdate(() => !lock && dispatch({ count: t }), [t]);
+    useUpdate(() => !lock && dispatch({ count: t }), [lock, t]);
     useUnmount(abort);
     return {
         time,
