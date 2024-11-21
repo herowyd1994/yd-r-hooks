@@ -9,10 +9,7 @@ export default ({ time: t, reset: r = false, delay, formatTime = time => time })
         timer.current = setInterval(() => {
             count -= 1;
             dispatch({ count });
-            if (count > 0) {
-                return;
-            }
-            resolve(abort());
+            count <= 0 && resolve(abort());
         }, 1000);
     }), delay);
     const abort = useLatest(() => {
