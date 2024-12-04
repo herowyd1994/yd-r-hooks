@@ -1,6 +1,6 @@
 import { useLatest, useReactive } from '../index';
 import { useRef } from 'react';
-export default (handler, delay = 500) => {
+export default (handler, delay = 250) => {
     const { lock, refs } = useReactive({ lock: false });
     const { current } = useRef(new Set());
     const done = useLatest(async (...args) => {
