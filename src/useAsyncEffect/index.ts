@@ -8,15 +8,11 @@ export const useAsyncEffect = <V>(
     unMount?: Mount<V> | DependencyList,
     deps?: DependencyList
 ) => {
-    const context = useRef<V>();
-    if (Array.isArray(unMount)) {
-        deps = unMount;
-    }
+    const ctx = useRef<V>();
+    Array.isArray(unMount) && (deps = unMount);
     useEffect(() => {
-        mount?.(context);
-        return () => {
-            typeof unMount === 'function' && unMount(context);
-        };
+        mount?.(ctx);
+        return () => typeof unMount === 'function' && unMount(ctx);
     }, deps);
 };
 export const useMount = (handler: Handler) => useAsyncEffect(handler, []);
