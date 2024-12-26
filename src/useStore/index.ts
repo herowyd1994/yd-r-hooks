@@ -8,15 +8,15 @@ import { deepClone } from '@yd/utils';
 export default <S extends Record<string, any>, K extends keyof S = keyof S>(
     initStore: S | (() => S)
 ) => {
-    const iStore = initStore instanceof Function ? initStore() : initStore;
+    const iStore = typeof initStore === 'function' ? initStore() : initStore;
     const [store, setStore] = useReducer<Reducer<S, Action<S>>>((store, action) => {
-        if (typeof action === 'object' || typeof action === 'function') {
-            const nState = { ...store };
+        if (typeof action === 'function' || (action && typeof action === 'object')) {
+            const nStore = { ...store };
             const nAction = typeof action === 'function' ? action(store) : action;
             Object.entries(nAction).forEach(
-                ([key, value]) => Reflect.has(nState, key) && Reflect.set(nState, key, value)
+                ([key, value]) => Reflect.has(nStore, key) && Reflect.set(nStore, key, value)
             );
-            return nState;
+            return nStore;
         }
         return store;
     }, deepClone(iStore));

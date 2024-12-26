@@ -8,7 +8,7 @@ const map = new WeakMap();
 export default <S extends Record<string, any>, K extends keyof S = keyof S>(
     initStore: S | (() => S)
 ) => {
-    const iStore = initStore instanceof Function ? initStore() : initStore;
+    const iStore = typeof initStore === 'function' ? initStore() : initStore;
     const [, update] = useState({});
     const observer = (target: S) => {
         if (map.has(target)) {
