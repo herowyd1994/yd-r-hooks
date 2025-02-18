@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { deepClone } from '@yd/utils';
+import { deepClone, getType } from '@yd/utils';
 const map = new WeakMap();
 export default (initValue) => {
     const iValue = typeof initValue === 'function' ? initValue() : deepClone(initValue);
@@ -35,10 +35,10 @@ export default (initValue) => {
                 : keys);
         keys.forEach(key => ($refs[key] = iValue[key]));
     };
-    const isObject = (target) => target &&
-        typeof target === 'object' &&
-        !(target instanceof RegExp) &&
-        !(target instanceof Date);
+    const isObject = (target) => {
+        const type = getType(target);
+        return type === 'array' || type === 'object';
+    };
     const $refs = useMemo(() => observer(iValue), []);
     return {
         ...$refs,

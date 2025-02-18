@@ -1,7 +1,7 @@
 /** @format */
 
 import { useMemo, useState } from 'react';
-import { deepClone } from '@yd/utils';
+import { deepClone, getType } from '@yd/utils';
 
 const map = new WeakMap();
 
@@ -42,11 +42,10 @@ export default <V extends Record<string, any>, K extends keyof V = keyof V>(
             : keys) as K[];
         keys.forEach(key => ($refs[key] = iValue[key]));
     };
-    const isObject = (target: any) =>
-        target &&
-        typeof target === 'object' &&
-        !(target instanceof RegExp) &&
-        !(target instanceof Date);
+    const isObject = (target: any) => {
+        const type = getType(target);
+        return type === 'array' || type === 'object';
+    };
     const $refs = useMemo<V>(() => observer(iValue), []);
     return {
         ...$refs,
