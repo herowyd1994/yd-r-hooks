@@ -8,7 +8,7 @@ import { deepClone } from '@yd/utils';
 export default <S extends Record<string, any>, K extends keyof S = keyof S>(
     initStore: S | (() => S)
 ) => {
-    const iStore = typeof initStore === 'function' ? initStore() : initStore;
+    const iStore = typeof initStore === 'function' ? initStore() : deepClone(initStore);
     const [store, setStore] = useReducer<Reducer<S, Action<S>>>((store, action) => {
         if (typeof action === 'function' || (action && typeof action === 'object')) {
             const nStore = { ...store };
@@ -19,27 +19,26 @@ export default <S extends Record<string, any>, K extends keyof S = keyof S>(
             return nStore;
         }
         return store;
-    }, deepClone(iStore));
+    }, iStore);
     const nextTick = useRef<NextTick<S>>();
-    const dispatch = (action: Action<S>) =>
+    const $dispatch = (action: Action<S>) =>
         new Promise<S>(resolve => {
             nextTick.current = resolve;
             setStore(action);
         });
-    const reset = (keys: K | K[] | '*' = '*') => {
-        const cStore = deepClone(iStore);
+    const $reset = (keys: K | K[] | '*' = '*') => {
         keys = (
-            keys === '*' ? Object.keys(cStore)
+            keys === '*' ? Object.keys(iStore)
             : typeof keys === 'string' ? [keys]
             : keys) as K[];
-        return dispatch(
-            keys.reduce((obj, key) => ({ ...obj, [key]: cStore[key] }), {} as Partial<S>)
+        return $dispatch(
+            keys.reduce((obj, key) => ({ ...obj, [key]: iStore[key] }), {} as Partial<S>)
         );
     };
     useUpdate(() => nextTick.current?.(store), [store]);
     return {
         ...store,
-        dispatch,
-        reset
+        $dispatch,
+        $reset
     };
 };

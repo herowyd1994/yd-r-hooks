@@ -1,14 +1,14 @@
 import { useLatest, useReactive } from '../index';
 import { useRef } from 'react';
 export default (handler, delay = 250) => {
-    const { lock, refs } = useReactive({ lock: false });
+    const { isLocking, $refs } = useReactive({ isLocking: false });
     const { current } = useRef(new Set());
     const done = useLatest(async (...args) => {
-        if (refs.lock) {
+        if (isLocking) {
             return Promise.reject('useLock Lock');
         }
         try {
-            refs.lock = true;
+            $refs.isLocking = true;
             const res = await handler(...args);
             await unLock(delay);
             return res;
@@ -22,12 +22,12 @@ export default (handler, delay = 250) => {
         current.add(setTimeout(() => {
             current.forEach(t => clearTimeout(t));
             current.clear();
-            refs.lock = false;
+            $refs.isLocking = false;
             resolve();
         }, time));
     });
     return {
-        lock,
+        isLocking,
         done,
         unLock
     };

@@ -5,14 +5,14 @@ import { Handler } from '../useLatest/types';
 import { useRef } from 'react';
 
 export default <V>(handler: Handler<V>, delay: number = 250) => {
-    const { lock, refs } = useReactive({ lock: false });
+    const { isLocking, $refs } = useReactive({ isLocking: false });
     const { current } = useRef(new Set<NodeJS.Timeout>());
     const done = useLatest(async (...args) => {
-        if (refs.lock) {
+        if (isLocking) {
             return Promise.reject('useLock Lock');
         }
         try {
-            refs.lock = true;
+            $refs.isLocking = true;
             const res = await handler(...args);
             await unLock(delay);
             return res;
@@ -27,13 +27,13 @@ export default <V>(handler: Handler<V>, delay: number = 250) => {
                 setTimeout(() => {
                     current.forEach(t => clearTimeout(t));
                     current.clear();
-                    refs.lock = false;
+                    $refs.isLocking = false;
                     resolve();
                 }, time)
             );
         });
     return {
-        lock,
+        isLocking,
         done,
         unLock
     };

@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { deepClone } from '@yd/utils';
 const map = new WeakMap();
-export default (initStore) => {
-    const iStore = initStore instanceof Function ? initStore() : initStore;
+export default (initValue) => {
+    const iValue = typeof initValue === 'function' ? initValue() : deepClone(initValue);
     const [, update] = useState({});
     const observer = (target) => {
         if (map.has(target)) {
@@ -16,35 +16,34 @@ export default (initStore) => {
             set(target, p, newValue, receiver) {
                 newValue = isObject(newValue) ? observer(newValue) : newValue;
                 Reflect.set(target, p, newValue, receiver);
-                forceUpdate();
+                $forceUpdate();
                 return true;
             },
             deleteProperty(target, p) {
                 Reflect.deleteProperty(target, p);
-                forceUpdate();
+                $forceUpdate();
                 return true;
             }
         });
         map.set(target, proxy);
         return proxy;
     };
-    const forceUpdate = () => update({});
-    const reset = (keys = '*') => {
-        const cStore = deepClone(iStore);
-        keys = (keys === '*' ? Object.keys(cStore)
+    const $forceUpdate = () => update({});
+    const $reset = (keys = '*') => {
+        keys = (keys === '*' ? Object.keys(iValue)
             : typeof keys === 'string' ? [keys]
                 : keys);
-        keys.forEach(key => (refs[key] = cStore[key]));
+        keys.forEach(key => ($refs[key] = iValue[key]));
     };
     const isObject = (target) => target &&
         typeof target === 'object' &&
         !(target instanceof RegExp) &&
         !(target instanceof Date);
-    const refs = useMemo(() => observer(deepClone(iStore)), []);
+    const $refs = useMemo(() => observer(iValue), []);
     return {
-        ...refs,
-        refs,
-        forceUpdate,
-        reset
+        ...$refs,
+        $refs,
+        $forceUpdate,
+        $reset
     };
 };

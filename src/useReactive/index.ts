@@ -5,12 +5,12 @@ import { deepClone } from '@yd/utils';
 
 const map = new WeakMap();
 
-export default <S extends Record<string, any>, K extends keyof S = keyof S>(
-    initStore: S | (() => S)
+export default <V extends Record<string, any>, K extends keyof V = keyof V>(
+    initValue: V | (() => V)
 ) => {
-    const iStore = typeof initStore === 'function' ? initStore() : initStore;
+    const iValue = typeof initValue === 'function' ? initValue() : deepClone(initValue);
     const [, update] = useState({});
-    const observer = (target: S) => {
+    const observer = (target: V) => {
         if (map.has(target)) {
             return map.get(target);
         }
@@ -22,37 +22,36 @@ export default <S extends Record<string, any>, K extends keyof S = keyof S>(
             set(target, p, newValue, receiver) {
                 newValue = isObject(newValue) ? observer(newValue) : newValue;
                 Reflect.set(target, p, newValue, receiver);
-                forceUpdate();
+                $forceUpdate();
                 return true;
             },
             deleteProperty(target, p) {
                 Reflect.deleteProperty(target, p);
-                forceUpdate();
+                $forceUpdate();
                 return true;
             }
-        }) as S;
+        }) as V;
         map.set(target, proxy);
         return proxy;
     };
-    const forceUpdate = () => update({});
-    const reset = (keys: K | K[] | '*' = '*') => {
-        const cStore = deepClone(iStore);
+    const $forceUpdate = () => update({});
+    const $reset = (keys: K | K[] | '*' = '*') => {
         keys = (
-            keys === '*' ? Object.keys(cStore)
+            keys === '*' ? Object.keys(iValue)
             : typeof keys === 'string' ? [keys]
             : keys) as K[];
-        keys.forEach(key => (refs[key] = cStore[key]));
+        keys.forEach(key => ($refs[key] = iValue[key]));
     };
     const isObject = (target: any) =>
         target &&
         typeof target === 'object' &&
         !(target instanceof RegExp) &&
         !(target instanceof Date);
-    const refs = useMemo<S>(() => observer(deepClone(iStore)), []);
+    const $refs = useMemo<V>(() => observer(iValue), []);
     return {
-        ...refs,
-        refs,
-        forceUpdate,
-        reset
+        ...$refs,
+        $refs,
+        $forceUpdate,
+        $reset
     };
 };

@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { rules, fnRules } from './rules';
 import { isNone } from '@yd/utils';
 export default (initStore) => {
-    const { dispatch: d, reset: r, ...store } = useStore(initStore);
+    const { $dispatch, $reset, ...store } = useStore(initStore);
     const data = useMemo(() => Object.entries(store).reduce((obj, [key, { value, label = '', placeholder = `请输入${label}` }]) => ({
         ...obj,
         [key]: {
@@ -20,11 +20,11 @@ export default (initStore) => {
     const dispatch = async (action) => {
         action = typeof action === 'function' ? action(getValues()) : action;
         Object.entries(action).forEach(([key, value]) => Reflect.has(store, key) && Reflect.set(store[key], 'value', value));
-        await d(store);
+        await $dispatch(store);
         return getValues();
     };
     const reset = async (keys = '*') => {
-        await r(keys);
+        await $reset(keys);
         return getValues();
     };
     const getValues = useLatest(() => Object.entries(store).reduce((obj, [key, { value }]) => ({ ...obj, [key]: value }), {}));

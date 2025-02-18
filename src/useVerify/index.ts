@@ -7,7 +7,7 @@ import { rules, fnRules } from './rules';
 import { isNone } from '@yd/utils';
 
 export default <S extends Store, K extends keyof S = keyof S>(initStore: S | (() => S)) => {
-    const { dispatch: d, reset: r, ...store } = useStore(initStore);
+    const { $dispatch, $reset, ...store } = useStore(initStore);
     const data = useMemo(
         () =>
             Object.entries(store).reduce(
@@ -33,11 +33,11 @@ export default <S extends Store, K extends keyof S = keyof S>(initStore: S | (()
         Object.entries(action).forEach(
             ([key, value]) => Reflect.has(store, key) && Reflect.set(store[key], 'value', value)
         );
-        await d(store as unknown as S);
+        await $dispatch(store as unknown as S);
         return getValues();
     };
     const reset = async (keys: K | K[] | '*' = '*') => {
-        await r(keys);
+        await $reset(keys);
         return getValues();
     };
     const getValues = useLatest(() =>
