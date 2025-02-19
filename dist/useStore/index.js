@@ -13,6 +13,7 @@ export default (initStore) => {
         return store;
     }, iStore);
     const nextTick = useRef();
+    const cbs = useRef();
     const $dispatch = (action) => new Promise(resolve => {
         nextTick.current = resolve;
         setStore(action);
@@ -23,10 +24,18 @@ export default (initStore) => {
                 : keys);
         return $dispatch(keys.reduce((obj, key) => ({ ...obj, [key]: iStore[key] }), {}));
     };
-    useUpdate(() => nextTick.current?.(store), [store]);
+    const $subscribe = (callback) => {
+        cbs.current.push(callback);
+        return () => (cbs.current = cbs.current.filter(cb => cb !== callback));
+    };
+    useUpdate(() => {
+        nextTick.current?.(store);
+        cbs.current.forEach(cb => cb(store));
+    }, [store]);
     return {
         ...store,
         $dispatch,
-        $reset
+        $reset,
+        $subscribe
     };
 };

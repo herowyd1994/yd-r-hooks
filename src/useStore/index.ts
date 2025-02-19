@@ -1,7 +1,7 @@
 /** @format */
 
 import { useReducer, useRef, Reducer } from 'react';
-import { Action, NextTick } from './types';
+import { Action, NextTick, Callback } from './types';
 import { useUpdate } from '../index';
 import { deepClone } from '@yd/utils';
 
@@ -21,6 +21,7 @@ export default <S extends Record<string, any>, K extends keyof S = keyof S>(
         return store;
     }, iStore);
     const nextTick = useRef<NextTick<S>>();
+    const cbs = useRef<Callback<S>[]>();
     const $dispatch = (action: Action<S>) =>
         new Promise<S>(resolve => {
             nextTick.current = resolve;
@@ -35,10 +36,18 @@ export default <S extends Record<string, any>, K extends keyof S = keyof S>(
             keys.reduce((obj, key) => ({ ...obj, [key]: iStore[key] }), {} as Partial<S>)
         );
     };
-    useUpdate(() => nextTick.current?.(store), [store]);
+    const $subscribe = (callback: Callback<S>) => {
+        cbs.current.push(callback);
+        return () => (cbs.current = cbs.current.filter(cb => cb !== callback));
+    };
+    useUpdate(() => {
+        nextTick.current?.(store);
+        cbs.current.forEach(cb => cb(store));
+    }, [store]);
     return {
         ...store,
         $dispatch,
-        $reset
+        $reset,
+        $subscribe
     };
 };
