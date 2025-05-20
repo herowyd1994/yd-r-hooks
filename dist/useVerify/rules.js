@@ -1,4 +1,7 @@
-export const rules = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.fnRules = exports.rules = void 0;
+exports.rules = {
     nickName: {
         regExp: /^[\u4e00-\u9fa5_a-zA-Z0-9]+$/,
         errMsg: '昵称至少由一个汉字、数字、字母、_ 组成'
@@ -52,25 +55,25 @@ export const rules = {
         errMsg: '金额格式不正确'
     }
 };
-export const fnRules = {
+exports.fnRules = {
     length: {
-        validate: (value, target) => value.length === target,
+        validate: function (value, target) { return value.length === target; },
         errMsg: '不等于设置的长度'
     },
     minLength: {
-        validate: (value, target) => value.length >= target,
+        validate: function (value, target) { return value.length >= target; },
         errMsg: '不能小于最小长度'
     },
     maxLength: {
-        validate: (value, target) => value.length <= target,
+        validate: function (value, target) { return value.length <= target; },
         errMsg: '不能大于最大长度'
     },
     min: {
-        validate: (value, target) => value >= target,
+        validate: function (value, target) { return value >= target; },
         errMsg: '不能小于最小值'
     },
     max: {
-        validate: (value, target) => value <= target,
+        validate: function (value, target) { return value <= target; },
         errMsg: '不能大于最大值'
     }
 };
