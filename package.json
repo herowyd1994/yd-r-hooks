@@ -1,5 +1,5 @@
 {
-    "name": "@yd/r-hooks",
+    "name": "r-hooks",
     "version": "1.0.1",
     "description": "## react工具库",
     "main": "dist/index.js",
