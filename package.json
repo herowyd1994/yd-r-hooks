@@ -1,6 +1,6 @@
 {
     "name": "@yd/r-hooks",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "## react工具库",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -18,7 +18,7 @@
     },
     "devDependencies": {
         "@types/node": "^22.9.1",
-        "@types/react": "^18.3.12",
+        "@types/react": "^19.2.7",
         "prettier": "^3.3.3",
         "typescript": "^5.6.3"
     }

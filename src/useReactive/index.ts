@@ -34,7 +34,13 @@ export default <V extends Record<string, any>, K extends keyof V = keyof V>(
         map.set(target, proxy);
         return proxy;
     };
+    const $refs = useMemo<V>(() => observer(iValue), []);
     const $forceUpdate = () => update({});
+    const $action = (action: Partial<V>) => {
+        Object.entries(action).forEach(
+            ([key, value]) => Reflect.has(iValue, key) && ($refs[key as K] = value)
+        );
+    };
     const $reset = (keys: K | K[] | '*' = '*') => {
         keys = (
             keys === '*' ? Object.keys(iValue)
@@ -46,11 +52,11 @@ export default <V extends Record<string, any>, K extends keyof V = keyof V>(
         const type = getType(target);
         return type === 'array' || type === 'object';
     };
-    const $refs = useMemo<V>(() => observer(iValue), []);
     return {
         ...$refs,
         $refs,
         $forceUpdate,
+        $action,
         $reset
     };
 };

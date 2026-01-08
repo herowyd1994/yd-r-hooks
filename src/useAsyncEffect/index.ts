@@ -8,7 +8,7 @@ export const useAsyncEffect = <V>(
     unMount?: Mount<V> | DependencyList,
     deps?: DependencyList
 ) => {
-    const ctx = useRef<V>();
+    const ctx = useRef<V>(void 0);
     Array.isArray(unMount) && (deps = unMount);
     useEffect(() => {
         mount?.(ctx);

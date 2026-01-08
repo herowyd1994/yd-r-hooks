@@ -7,7 +7,7 @@ import { rules, fnRules } from './rules';
 import { isNone } from '@yd/utils';
 
 export default <S extends Store, K extends keyof S = keyof S>(initStore: S | (() => S)) => {
-    const { $dispatch, $reset, ...store } = useStore(initStore);
+    const { $dispatch, $reset, $subscribe: subscribe, ...store } = useStore(initStore);
     const data = useMemo(
         () =>
             Object.entries(store).reduce(
@@ -95,6 +95,7 @@ export default <S extends Store, K extends keyof S = keyof S>(initStore: S | (()
         ...data,
         dispatch,
         reset,
+        subscribe,
         validate,
         getValues,
         getErrMsg

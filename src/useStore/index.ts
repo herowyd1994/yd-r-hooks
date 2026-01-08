@@ -1,6 +1,6 @@
 /** @format */
 
-import { useReducer, useRef, Reducer } from 'react';
+import { useReducer, useRef } from 'react';
 import { Action, NextTick, Callback } from './types';
 import { useUpdate } from '../index';
 import { deepClone } from '@yd/utils';
@@ -9,7 +9,7 @@ export default <S extends Record<string, any>, K extends keyof S = keyof S>(
     initStore: S | (() => S)
 ) => {
     const iStore = typeof initStore === 'function' ? initStore() : deepClone(initStore);
-    const [store, setStore] = useReducer<Reducer<S, Action<S>>>((store, action) => {
+    const [store, setStore] = useReducer<S, any>((store, action) => {
         if (typeof action === 'function' || (action && typeof action === 'object')) {
             const nStore = { ...store };
             const nAction = typeof action === 'function' ? action(store) : action;
@@ -20,12 +20,12 @@ export default <S extends Record<string, any>, K extends keyof S = keyof S>(
         }
         return store;
     }, iStore);
-    const nextTick = useRef<NextTick<S>>();
-    const cbs = useRef<Callback<S>[]>();
+    const nextTick = useRef<NextTick<S>>(void 0);
+    const cbs = useRef<Callback<S>[]>([]);
     const $dispatch = (action: Action<S>) =>
         new Promise<S>(resolve => {
             nextTick.current = resolve;
-            setStore(action);
+            setStore(action as any);
         });
     const $reset = (keys: K | K[] | '*' = '*') => {
         keys = (
