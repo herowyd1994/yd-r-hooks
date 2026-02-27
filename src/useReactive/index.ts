@@ -36,11 +36,10 @@ export default <V extends Record<string, any>, K extends keyof V = keyof V>(
     };
     const $refs = useMemo<V>(() => observer(iValue), []);
     const $forceUpdate = () => update({});
-    const $action = (action: Partial<V>) => {
+    const $action = (action: Partial<V>) =>
         Object.entries(action).forEach(
             ([key, value]) => Reflect.has(iValue, key) && ($refs[key as K] = value)
         );
-    };
     const $reset = (keys: K | K[] | '*' = '*') => {
         keys = (
             keys === '*' ? Object.keys(iValue)
